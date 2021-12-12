@@ -12,38 +12,48 @@ from pyecharts.charts import Map
 from pyecharts.faker import Faker
 
 
-#read data
+#Read data
 data = pd.read_excel("nanjing.xlsx")
 df = data.iloc[:,0:9]
 df.columns = ['name','type','state','address','addresses','room','area','price','second']
-print(df)
-print(df.shape)#View data dimensions
-print(df.isnull().sum())#Detect null value
+#print(df)
+#print(df.shape)#View data dimensions
+#print(df.isnull().sum())#Detect null value
 df.dropna(subset=['addresses','price','room','area','second'],inplace=True)
-print(df.isnull().sum())
-print(df.duplicated().sum())#Detection of duplicate values
-print(df.shape)
+#print(df.isnull().sum())
+#print(df.duplicated().sum())#Detection of duplicate values
+#print(df.shape)
 data1 = df.iloc[:,0:9]
-print(data1)
+#print(data1)
 
 
 
 #Convert text-based features to numeric
-def type_conversion():
+def type_conversion(name):
+    """
+
+    This function is aimed at data preprocessing.
+    The purpose is to convert the features based on the data in the data set from text to numbers.
+    :param name:
+    :return:
+
+    """
     warnings.filterwarnings("ignore")
-    df["name"] = pd.factorize(df["name"])[0].astype(np.uint16)
-    df["type"] = pd.factorize(df["type"])[0].astype(np.uint16)
-    df["state"] = pd.factorize(df["state"])[0].astype(np.uint16)
-    df["address"] = pd.factorize(df["address"])[0].astype(np.uint16)
-    df["addresses"] = pd.factorize(df["addresses"])[0].astype(np.uint16)
-    df["room"] = pd.factorize(df["room"])[0].astype(np.uint16)
-    df["area"] = pd.factorize(df["area"])[0].astype(np.uint16)
-    df["second"] = pd.factorize(df["second"])[0].astype(np.uint16)
+    df[name] = pd.factorize(df[name])[0].astype(np.uint16)
     print(df.head())
-type_conversion()
+#type_conversion("name")
+#type_conversion("type")
+#type_conversion("state")
+#type_conversion("address")
+#type_conversion("room")
 
 #Standardization processing and normalization processing
 def Normalization():
+    """
+    This function is also aimed at data preprocessing, and standardizes and normalizes them.
+
+    :return:
+    """
     df.head(20)
     scaler = StandardScaler()  #standardization
     data = pd.DataFrame(
@@ -53,8 +63,13 @@ def Normalization():
     print(df.describe()) #Data description
 #Normalization()
 
+
 #Scatter graph
 def Scatter_graph():
+    """
+    Generate a scatter chart to show the general trend of different house types in different price ranges.
+    :return:
+    """
     score = data1['type']
     price = data1['price']
     plt.scatter(x=score, y=price, color='red',marker='o',alpha=0.5, s=10)
@@ -63,6 +78,12 @@ def Scatter_graph():
 
 #Price Histogram
 def Histogram():
+    """
+    This function This function wants to analyze the unit price density per square meter of houses
+    from the entire city to determine the price of most houses and the overall price distribution.
+    :return:
+    """
+
     sns.set()
     sns.distplot(data1['price'], bins=20, kde=True, rug=True, vertical=True)
     plt.title("Price density range")
@@ -71,6 +92,11 @@ def Histogram():
 
 #Address and price relationship histogram
 def Histogram_1():
+    """
+    Analyze the housing prices in the area and found that
+    the housing prices in the prosperous areas are the highest
+    :return:
+    """
 
     Regional_price = data1.groupby('address')['price'].mean()  # Find the mean
     Regional_price.sort_values(ascending=True, inplace=True)  # Find the sort
@@ -84,6 +110,12 @@ def Histogram_1():
 
 #Type and price relationship histogram
 def Histogram_2():
+    """
+    Analyze the relationship between housing types and housing prices,
+    and found that the housing prices of the sub-commercial type are the highest
+
+    :return:
+    """
 
     Regional_price = data1.groupby('type')['price'].mean()
     Regional_price.sort_values(ascending=True, inplace=True)
@@ -96,7 +128,12 @@ def Histogram_2():
 
 #Area and price relationship box plot
 def box_plot():
+    """
+    This function aimed to analyze the box plot of the influence of the number of rooms in the house on the price.
+    It can be seen that the average price of having four or five rooms is the highest, and having more or fewer rooms will affect the price.
 
+    :return:
+    """
     hdate = data1['room']
     price = data1['price']
     f,ax = plt.subplots(figsize=(10, 7))
@@ -109,6 +146,11 @@ def box_plot():
 
 #Pie chart of distribution of new houses in Nanjing
 def pie_chart():
+    """
+    The purpose of this function is to generate a pie chart
+    in order to see the activity of the real estate market in different regions more intuitively.
+    :return:
+    """
 
     Housing_resources = data1.address.value_counts().sort_values()
 
@@ -131,6 +173,12 @@ def pie_chart():
 
 #Correlation thermodynamic diagram
 def Thermodynamic_diagram():
+    """
+    This function is to generate heat maps of different related elements to determine the degree of influence of different factors
+    such as room type, area, area, etc., the darker the color and the larger the number, the greater the mutual influence.
+    :return:
+    """
+
     transformed_data = pd.get_dummies(data)
     colormap = plt.cm.RdBu
     plt.figure(figsize=(14, 12))
@@ -140,18 +188,27 @@ def Thermodynamic_diagram():
     sns.heatmap(transformed_data.astype(float).corr(), linewidths=0.1, vmax=1.0, square=True, cmap=colormap, linecolor='white', annot=True)
     plt.show()
 
+#Thermodynamic_diagram()
+
 #Statistics address information
 
 lista = data1['address']
 c = Counter(lista)
-print(c)
-
+#print(c)
 
 #nanjing map
 
-
 # Basic data
 def nanjing_map():
+    """
+    The reason for calling the pyechart package to generate a map is that the precise latitude and longitude of the real estate cannot be obtained, 
+    and using this package to generate a map does not require precise latitude and longitude.
+
+    This function analyzes the number of sold houses in each district in Nanjing, and combines the analysis results to judge the popularity of the real estate through the shade of the color. 
+    The darker the area, the higher the house purchase rate.
+
+    :return:
+    """
     quxian = ['江宁区', '浦口区',
               '玄武区', '鼓楼区', '雨花台区',
               '六合区', '栖霞区', '溧水区', '高淳区',
@@ -169,4 +226,5 @@ def nanjing_map():
     )
 
     os.system("open render.html")
+
 
