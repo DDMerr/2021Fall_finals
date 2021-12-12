@@ -1,9 +1,10 @@
 # 2021Fall_finals
 
-Please check the Readme.docx for specific results.
 
 Yunjia zhang:
-All content, including: code, analysis ideas, analysis process, analysis results, reference. Are all put in the folder: Nanjing
+All the contents are put into the folder: Nanjing, including: code, data, results and readme.docx. 
+The readme.docx contains analysis ideas, analysis process, analysis results, and reference.
+
 
 Yingjie: 
 The existing data are all monthly data in 2019 and 2020, and part of the data in 2021. The data comes from kaggle. First of all, I compare house prices in the city by district, and compare whether there are obvious differences in the fluctuations of house prices in each district before and after the occurrence of COVID-19, but in fact I found that for a single area, covid's impact on housing prices in each district is generally fair, and the volatility information of some district with high volatility is not consistent with the time point of the covid control policy, so I believe that the impact of covid on housing prices is not different depending on the district.
