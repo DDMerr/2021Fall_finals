@@ -1,3 +1,3 @@
 # 2021Fall_finals
 
-complete
+Please check the Readme.docx for specific results.
